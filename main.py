@@ -6,28 +6,19 @@ from flask_bcrypt import Bcrypt
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, JWTManager, get_jwt
-
 from models import User, Session
 
-main = Flask(__name__)
-bcrypt = Bcrypt(main)
-# auth = HTTPBasicAuth()
-jwt = JWTManager(main)
-
-session = Session()
-
-main.config["DEBUG"] = True
-
-DATABASE = "./test.db"
 
 app = Flask(__name__)
-main.config["DEBUG"] = True
-main.config["SECRET_KEY"] = "secret_key"
+app.config["SECRET_KEY"] = "secret_key"
+jwt = JWTManager(app)
+
 
 bcrypt = Bcrypt(app)
 # auth = HTTPBasicAuth()
-jwt = JWTManager(app)
 session = Session()
+app.config["DEBUG"] = True
+DATABASE = "./test.db"
 
 
 def get_db():
