@@ -1,21 +1,22 @@
 import json
+from datetime import datetime
+
 from flask import Flask, g, jsonify, request, render_template, make_response
 from flask_cors import CORS, cross_origin
 from flask import Flask, g, request, jsonify
 from flask_bcrypt import Bcrypt
 from requests import Session
-from requests.auth import HTTPBasicAuth
-from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, JWTManager, get_jwt
-from models import User, Session
-
+from flask_httpauth import HTTPBasicAuth
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, JWTManager
+from models import User, Session, Wall
+from schemes import WallSchema
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret_key"
 jwt = JWTManager(app)
 
-
 bcrypt = Bcrypt(app)
-# auth = HTTPBasicAuth()
+auth = HTTPBasicAuth()
 session = Session()
 app.config["DEBUG"] = True
 DATABASE = "./test.db"
@@ -55,12 +56,10 @@ def create_user():
 
 
 @app.route('/login', methods=['POST'])
-# @auth.verify_password
+@auth.verify_password
 def login():
     auth = json.loads(request.data)
     # print('az', auth)
-    # if not auth or not auth.username or not auth.password:
-    #     return make_response('could not verify', 401, {'WWW.Authantication': 'Basic realm:"login require"'})
 
     user = session.query(User).filter(
         User.username == auth['username']).one_or_none()
@@ -100,6 +99,61 @@ def edit_profile():
     find_user.city = data['city']
     find_user.photo = data['photo']
 
+    session.commit()
+
+    return jsonify({'message': 'successful operation'})
+
+
+@app.route('/wall', methods=['POST'])
+@jwt_required()
+def create_news():
+    current_user = get_jwt_identity()
+    if current_user is None:
+        return make_response(jsonify({"403": "Access is denied"}), 403)
+
+    data = request.get_json()
+    new = Wall(
+        user_id=current_user,
+        datetime=datetime.utcnow(),
+        title=data['title'],
+        text=data['text'],
+        photo_wall=data['photo']
+    )
+
+    session.add(new)
+    session.commit()
+
+    return jsonify({'message': 'successful operation!'})
+
+
+@app.route('/news', methods=['GET'])
+@jwt_required()
+def display_news():
+    current_user = get_jwt_identity()
+    if current_user is None:
+        return make_response(jsonify({"403": "Access is denied"}), 403)
+
+    found_news = session.query(Wall).all()
+    news = []
+
+    for new in found_news:
+        news.append(WallSchema().dump(new))
+    return jsonify(news)
+
+
+@app.route("/delete_news", methods=['DELETE'])
+@jwt_required()
+def delete_news():
+    current_user = get_jwt_identity()
+    if current_user is None:
+        return make_response(jsonify({"403": "Access is denied"}), 403)
+    found_news = session.query(Wall).all()
+    news = []
+
+    for new in found_news:
+        news.append(WallSchema().dump(new))
+
+    session.delete(new)
     session.commit()
 
     return jsonify({'message': 'successful operation'})
