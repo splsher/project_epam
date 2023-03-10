@@ -1,18 +1,19 @@
 import json
 from datetime import datetime
-
+import requests
 from flask import Flask, g, jsonify, request, render_template, make_response
 from flask_cors import CORS, cross_origin
 from flask import Flask, g, request, jsonify
 from flask_bcrypt import Bcrypt
-from requests import Session
 from flask_httpauth import HTTPBasicAuth
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, JWTManager
-from models import User, Session, Wall
+from models.models import User, Session, Wall
 from schemes import WallSchema
 
-app = Flask(__name__)
-app.config["SECRET_KEY"] = "secret_key"
+app = Flask(__name__, template_folder='templates', static_folder='static')
+
+# app = Flask(__name__)
+app.config["JWT_SECRET_KEY"] = "super-secret"
 jwt = JWTManager(app)
 
 bcrypt = Bcrypt(app)
@@ -22,13 +23,37 @@ app.config["DEBUG"] = True
 DATABASE = "./test.db"
 
 
+@app.route('/', methods=["POST", "GET"])
+def login_web():
+    if request.method == "POST":
+        if request.form["username"] != "" and request.form["password"] != "":
+            username = request.form["username"]
+            password = request.form["password"]
+    return render_template('login.html')
+
+
+# @app.route('/signup', methods=["POST", "GET"])
+# def register():
+#     return render_template('registration.html')
+
+
+# @app.route('/wall')
+# def display_new():
+#     return render_template('wall.html', title='The news')
+#
+#
+# @app.route('/login_2')
+# def login_2():
+#     return render_template('index.html', title="Login 2")
+
+
 def get_db():
     db = getattr(g, '_database', None)
 
 
-@app.route('/', methods=['GET'])
-def home():
-    return "Backend"
+# @app.route('/', methods=['GET'])
+# def home():
+#     return "Welcome to my project🪐"
 
 
 @app.route('/signup', methods=['POST'])
@@ -54,17 +79,37 @@ def create_user():
 
     return jsonify({'message': 'successful operation'})
 
+# @app.route('/login', methods=['POST'])
+# @auth.verify_password
+# def login():
+#     auth = json.loads(request.data)
+#     print('az', auth)
+#
+#     user = session.query(User).filter(
+#         User.username == auth['username']).one_or_none()
+#     if user is None:
+#         return 'User with such username was not found'
+#
+#     # if not bcrypt.check_password_hash(user.password, auth.password):
+#     #     return 'Wrong password'
+#
+#     access_token = create_access_token(identity=user.id)
+#
+#     return jsonify({'token': access_token})
 
 @app.route('/login', methods=['POST'])
 @auth.verify_password
 def login():
     auth = json.loads(request.data)
-    # print('az', auth)
+    print('az', auth)
 
-    user = session.query(User).filter(
-        User.username == auth['username']).one_or_none()
-    if user is None:
+    user = session.query(User).filter(User.username == auth['username']).all()
+    if not user:
         return 'User with such username was not found'
+    elif len(user) > 1:
+        return 'Multiple users found with the same username'
+
+    user = user[0]
 
     # if not bcrypt.check_password_hash(user.password, auth.password):
     #     return 'Wrong password'
@@ -144,6 +189,7 @@ def display_news():
 @app.route("/delete_news", methods=['DELETE'])
 @jwt_required()
 def delete_news():
+    global new
     current_user = get_jwt_identity()
     if current_user is None:
         return make_response(jsonify({"403": "Access is denied"}), 403)
@@ -159,6 +205,6 @@ def delete_news():
     return jsonify({'message': 'successful operation'})
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # socketio.run(app)
     app.run()
