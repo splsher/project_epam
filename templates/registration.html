@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Registration</title>
+
+    <script src="../static/register.js"></script>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap"
+            rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../static/login.css">
+</head>
+<body>
+
+
+<div class="mainbox">
+    <form class="inputitem" id = 'register'>
+        <div class="inputbox" >
+            <label>
+                <Input type="text"  class ="form-control" placeholder="username" name="username"></Input>
+            </label>
+        </div>
+        <div class="inputbox" >
+            <label>
+                <Input type="text"  class ="form-control" placeholder="email" name="email"></Input>
+            </label>
+        </div>
+        <div class="inputbox" >
+            <label>
+                <Input type="password"  class ="form-control" placeholder="password" name="password"></Input>
+            </label>
+        </div>
+        <div class="inputbox"  >
+            <label>
+                <Input type="text"  class ="form-control" placeholder="city" name="city"></Input>
+            </label>
+        </div>
+        <div class="inputbox"  >
+            <label>
+<!--                <input type="image"  placeholder="photo" name="photo">-->
+<!--                <Input type="image"  class ="form-control" placeholder="photo" name="photo"></Input>-->
+            </label>
+        </div>
+    </form>
+        <button class = "button_form" href="/" onclick="register('Register')">Register</button>
+</div>
+<div class="topnav">
+    <a href="/">Log In</a>
+</div>
+</body>
+</html>
+
