@@ -1,8 +1,6 @@
 import json
 from datetime import datetime
-import requests
 from flask import Flask, g, jsonify, request, render_template, make_response
-from flask_cors import CORS, cross_origin
 from flask import Flask, g, request, jsonify
 from flask_bcrypt import Bcrypt
 from flask_httpauth import HTTPBasicAuth
@@ -12,7 +10,6 @@ from schemes import WallSchema
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
-# app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "super-secret"
 jwt = JWTManager(app)
 
@@ -32,19 +29,19 @@ def login_web():
     return render_template('login.html')
 
 
-# @app.route('/signup', methods=["POST", "GET"])
-# def register():
-#     return render_template('registration.html')
+@app.route('/signup', methods=["POST", "GET"])
+def register():
+    return render_template('registration.html')
 
 
-# @app.route('/wall')
-# def display_new():
-#     return render_template('wall.html', title='The news')
-#
-#
-# @app.route('/login_2')
-# def login_2():
-#     return render_template('index.html', title="Login 2")
+@app.route('/wall')
+def display_new():
+    return render_template('wall.html', title='The news')
+
+
+@app.route('/create_news')
+def create_new():
+    return render_template('create_news.html', title='Create a new')
 
 
 def get_db():
@@ -209,5 +206,4 @@ def delete_news():
 
 
 if __name__ == '__main__':
-    # socketio.run(app)
     app.run()
