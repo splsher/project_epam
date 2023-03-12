@@ -1,0 +1,98 @@
+
+@import "header_footer.scss";
+@import "template.scss";
+// Colorsm
+$greenSeaweed: rgba(2, 128, 144, 1);
+$blueQueen: rgba(69, 105, 144, 1);
+$redFire: rgba(244, 91, 105, 1);
+
+// Fonts
+$fontAsap: 'Asap', sans-serif;
+
+
+
+.main_head {
+  background-repeat: no-repeat;
+  background-size: 100%;
+  height: 600px;
+  position: relative;
+
+}
+
+.main_head::before {
+  content: "";
+
+  background-size: cover;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  opacity: 0.85;
+}
+
+
+
+.main_section{
+  max-width: 1500px;
+  margin: 0 auto;
+  padding-left: 100px;
+  padding-right: 100px;
+  padding-top: 150px;
+  position: relative;
+  text-align: center;
+  &_content{
+    margin: 0 auto;
+    padding-left: 30px;
+    & h1{
+      color: white;
+      font-weight: bold;
+      font-size: 50px;
+      line-height: 60px;
+      padding-bottom: 40px;
+    }
+  }
+
+}
+.login {
+
+  overflow: hidden;
+  background-color: white;
+  padding: 40px 30px 30px 30px;
+  border-radius: 10px;
+  position: absolute;
+  top: 160px;
+  left: 140px;
+  width: 400px;
+  box-shadow: 5px 10px 10px rgba($greenSeaweed, 0.2);
+
+  > h2{
+    font-family: $fontAsap;
+    font-size: 26px;
+    text-align: center;
+    padding-bottom: 10px;
+  }
+  > input {
+    @extend %input_style;
+  }
+
+  > button {
+    font-family: $fontAsap;
+    cursor: pointer;
+    color: #fff;
+    font-size: 16px;
+    text-transform: uppercase;
+    width: 80px;
+    padding: 10px 0;
+
+    margin-top: 10px;
+    margin-left: -5px;
+    border-radius: 5px;
+    background-color: $redFire;
+
+
+    &:hover {
+      background-color: darken($redFire, 5%);
+    }
+  }
+}

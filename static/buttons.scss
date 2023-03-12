@@ -1,0 +1,51 @@
+@import "variables.css";
+
+@mixin submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  padding: 1px;
+  color: white;
+  text-align: center;
+  font-size: 1.8em;
+  font-weight: 100;
+  width: $elem_width;
+  background-color: #D6AC54;
+  border: none;
+  border-radius: $borderRadius;
+  margin-top:5%;
+}
+
+@mixin submit-hover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  padding: 1px;
+  color: white;
+  text-align: center;
+  font-size: 1.8em;
+  font-weight: 100;
+  width: $elem_width;
+  background-color: #d4a43f;
+  border: none;
+  border-radius: $borderRadius;
+  margin-top:5%;
+}
+@mixin submit-focus-visible {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  padding: 1px;
+  color: white;
+  text-align: center;
+  font-size: 1.8em;
+  font-weight: 100;
+  width: $elem_width;
+  background-color: #d4a43f;
+  border: none;
+  border-radius: $borderRadius;
+  margin-top:5%;
+}
