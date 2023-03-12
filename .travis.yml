@@ -1,12 +1,11 @@
 language: python
 python:
   - "3.9.7"
-
-install:
-  - pip install -r requirements.txt
-
-script:
-  - pytest tests/
-
-notifications:
-  email: false
+jobs:
+  include:
+    - name: "Run pytest tests"
+      if: type = pull_request
+      install:
+        - pip install -r requirements.txt
+      script:
+        - pytest
