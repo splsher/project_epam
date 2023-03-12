@@ -96,6 +96,7 @@ def create_user():
 #     access_token = create_access_token(identity=user.id)
 #
 #     return jsonify({'token': access_token})
+# log in function
 
 @app.route('/login', methods=['POST'])
 @auth.verify_password
