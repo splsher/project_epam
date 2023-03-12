@@ -21,11 +21,11 @@ class TestCreateNews(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.data), {'message': 'successful operation!'})
 
-    # def test_create_news_with_missing_data(self):
-    #     data = {'title': 'Test News'}
-    #     response = self.app.post('/wall', headers=self.headers, json=data)
-    #     self.assertEqual(response.status_code, 400)
-    #     self.assertEqual(json.loads(response.data), {'error': 'Bad Request'})
+    def test_create_news_with_missing_data(self):
+        data = {'title': 'Test News'}
+        response = self.app.post('/wall', headers=self.headers, json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(json.loads(response.data), {'error': 'Bad Request'})
 
     def test_create_news_with_invalid_token(self):
         data = {

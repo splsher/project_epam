@@ -6,7 +6,6 @@ from flask import jsonify
 
 class TestSignup(unittest.TestCase):
     def test_create_user_success(self):
-        # Mocking the request object and setting its get_json method to return a dictionary with valid data
         with app.test_request_context('/signup', method='POST',
                                       data={"username": "john_doe", "email": "john_doe@example.com",
                                             "password": "password123", "city": "New York",
