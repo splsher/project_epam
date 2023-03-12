@@ -99,26 +99,27 @@ def create_user():
 #     return jsonify({'token': access_token})
 # log in function
 
+
 @app.route('/login', methods=['POST'])
 @auth.verify_password
 def login():
     auth = json.loads(request.data)
-    print('az', auth)
-
-    user = session.query(User).filter(User.username == auth['username']).all()
+    user = get_user_by_username(auth['username'])
     if not user:
         return 'User with such username was not found'
-    elif len(user) > 1:
-        return 'Multiple users found with the same username'
-
-    user = user[0]
-
-    # if not bcrypt.check_password_hash(user.password, auth.password):
-    #     return 'Wrong password'
 
     access_token = create_access_token(identity=user.id)
 
     return jsonify({'token': access_token})
+
+
+def get_user_by_username(username):
+    user = session.query(User).filter(User.username == username).all()
+    if not user:
+        return None
+    elif len(user) > 1:
+        raise ValueError('Multiple users found with the same username')
+    return user[0]
 
 
 @app.route('/edit_profile', methods=['PUT'])

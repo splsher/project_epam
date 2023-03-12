@@ -1,48 +1,43 @@
 import json
 import unittest
-from unittest import mock
-from app import app, User, session
+from unittest.mock import patch, MagicMock
+
+from app import app, get_user_by_username
+from models.models import User
+
 
 class TestLogin(unittest.TestCase):
     def setUp(self):
-        self.client = app.test_client()
+        self.app = app.test_client()
 
-    @mock.patch('models.models.session')
-    def test_valid_login(self, mock_session):
-        # Mock the User object
-        user_mock = mock.MagicMock()
-        user_mock.username = 'Tony'
-        user_mock.password = '1111'
-        user_mock.email = 'tony@gmail.com'
-        user_mock.city = 'London'
-        user_mock.photo = 'null'
+    @patch('app.session')
+    def test_login_success(self, mock_session):
+        # Mock the query() method of the session object to return a mock object
+        mock_query = MagicMock()
+        mock_query.filter().all.return_value = [MagicMock(id=1)]
+        mock_session.query.return_value = mock_query
 
-        # Configure the session mock to return the mock user when queried
-        mock_session.query.return_value.filter_by.return_value.first.return_value = user_mock
+        # Make a POST request to the login endpoint
+        response = self.app.post('/login', data=json.dumps({'username': 'testuser'}),
+                                 content_type='application/json')
 
-        # Prepare the request data
-        auth_data = {'username': 'test_user', 'password': '1111'}
-        data = json.dumps(auth_data)
-
-        # Make the request
-        response = self.client.post('/login', data=data, content_type='application/json')
-
-        # Check the response
+        # Check that the response is correct
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'token', response.data)
+        self.assertIn('token', response.json)
+        self.assertIsInstance(response.json['token'], str)
 
-    @mock.patch('models.models.session')
-    def test_invalid_login(self, mock_session):
-        # Configure the session mock to return None when queried
-        mock_session.query.return_value.filter_by.return_value.first.return_value = None
+    @patch('app.session')
+    def test_login_user_not_found(self, mock_session):
+        # Mock the query() method of the session object to return an empty list
+        mock_query = MagicMock()
+        mock_query.filter().all.return_value = []
+        mock_session.query.return_value = mock_query
 
-        # Prepare the request data
-        auth_data = {'username': 'invaliduser', 'password': 'invalidpassword'}
-        data = json.dumps(auth_data)
+        # Make a POST request to the login endpoint
+        response = self.app.post('/login', data=json.dumps({'username': 'testuser'}),
+                                 content_type='application/json')
 
-        # Make the request
-        response = self.client.post('/login', data=data, content_type='application/json')
-
-        # Check the response
+        # Check that the response is correct
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'User with such username was not found', response.data)
+        self.assertEqual(response.data.decode('utf-8'), 'User with such username was not found')
+
