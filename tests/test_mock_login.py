@@ -1,12 +1,11 @@
 import json
-from unittest import mock, TestCase
+import unittest
+from unittest import mock
+from app import app, User, session
 
-from app import app
-
-
-class TestLogin(TestCase):
+class TestLogin(unittest.TestCase):
     def setUp(self):
-        self.app = app.test_client()
+        self.client = app.test_client()
 
     @mock.patch('models.models.session')
     def test_valid_login(self, mock_session):
@@ -21,31 +20,29 @@ class TestLogin(TestCase):
         # Configure the session mock to return the mock user when queried
         mock_session.query.return_value.filter_by.return_value.first.return_value = user_mock
 
-        with self.app as client:
-            # Prepare the request data
-            auth_data = {'username': 'Tony', 'password': '1111'}
-            data = json.dumps(auth_data)
+        # Prepare the request data
+        auth_data = {'username': 'test_user', 'password': '1111'}
+        data = json.dumps(auth_data)
 
-            # Make the request
-            response = client.post('/login', data=data, content_type='application/json')
+        # Make the request
+        response = self.client.post('/login', data=data, content_type='application/json')
 
-            # Check the response
-            self.assertEqual(response.status_code, 200)
-            self.assertIn(b'token', response.data)
+        # Check the response
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'token', response.data)
 
     @mock.patch('models.models.session')
     def test_invalid_login(self, mock_session):
-        # Configure the session mock to return None when queried for the user
+        # Configure the session mock to return None when queried
         mock_session.query.return_value.filter_by.return_value.first.return_value = None
 
-        with self.app as client:
-            # Prepare the request data
-            auth_data = {'username': 'invaliduser', 'password': 'invalidpassword'}
-            data = json.dumps(auth_data)
+        # Prepare the request data
+        auth_data = {'username': 'invaliduser', 'password': 'invalidpassword'}
+        data = json.dumps(auth_data)
 
-            # Make the request
-            response = client.post('/login', data=data, content_type='application/json')
+        # Make the request
+        response = self.client.post('/login', data=data, content_type='application/json')
 
-            # Check the response
-            self.assertEqual(response.status_code, 200)
-            self.assertIn(b'User with such username was not found', response.data)
+        # Check the response
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'User with such username was not found', response.data)
