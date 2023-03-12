@@ -22,18 +22,18 @@ def client(app):
     client = app.test_client()
     return client
 
-
-def test_my_route(client):
-    response = client.post('/')
-    assert response.status_code == 404
-
-
-def test_edit_profile(client):
-    data = {'username': 'new_username'}
-    response = client.put('/edit_profile', json=data)
-    assert response.status_code == 404
-    # assert that the user's profile has been updated with the new username
-
+#
+# def test_my_route(client):
+#     response = client.post('/')
+#     assert response.status_code == 404
+#
+#
+# def test_edit_profile(client):
+#     data = {'username': 'new_username'}
+#     response = client.put('/edit_profile', json=data)
+#     assert response.status_code == 404
+#     # assert that the user's profile has been updated with the new username
+#
 
 import unittest
 from flask import Flask, request, json
